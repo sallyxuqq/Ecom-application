@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 
 
 
@@ -137,5 +138,13 @@ public class CartService {
 
         return true;
     }
+
+
+    public List<CartItem> getCart(Long userId) {
+
+    return userRepository.findById(userId)
+            .map(cartItemRepository::findByUser)
+            .orElseGet(List::of);
+}
             
 }
