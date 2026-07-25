@@ -17,4 +17,7 @@ public interface CartItemRepository
             // Find an existing cart item for the same user and product
             CartItem findByUserAndProduct(User user, Product product);
 
+            // Delete a cart item for a specific user and product
+            void deleteByUserAndProduct(User user, Product product);
+
 }

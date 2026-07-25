@@ -1,6 +1,7 @@
 package com.app.ecom.service;
-import java.util.Optional;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -18,7 +19,9 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
+    // Create a new product
     public ProductResponse createProduct(ProductRequest productRequest) {
+
         Product product = new Product();
 
         updateProductFromRequest(product, productRequest);
@@ -42,31 +45,45 @@ public class ProductService {
 
         return productRepository.findById(id)
                 .map(product -> {
+
                     product.setActive(false);
                     productRepository.save(product);
+
                     return true;
                 })
                 .orElse(false);
     }
+
+    // Update an existing product
     public Optional<ProductResponse> updateProduct(
-        Long id,
-        ProductRequest productRequest) {
+            Long id,
+            ProductRequest productRequest) {
 
-    return productRepository.findById(id)
-            .map(existingProduct -> {
+        return productRepository.findById(id)
+                .map(existingProduct -> {
 
-                updateProductFromRequest(
-                        existingProduct,
-                        productRequest
-                );
+                    updateProductFromRequest(
+                            existingProduct,
+                            productRequest
+                    );
 
-                Product savedProduct =
-                        productRepository.save(existingProduct);
+                    Product savedProduct =
+                            productRepository.save(existingProduct);
 
-                return mapToProductResponse(savedProduct);
-            });
-}
+                    return mapToProductResponse(savedProduct);
+                });
+    }
 
+    // Search products by keyword
+    public List<ProductResponse> searchProducts(String keyword) {
+
+        return productRepository.searchProducts(keyword)
+                .stream()
+                .map(this::mapToProductResponse)
+                .collect(Collectors.toList());
+    }
+
+    // Copy request data into a product entity
     private void updateProductFromRequest(
             Product product,
             ProductRequest productRequest) {
@@ -79,7 +96,9 @@ public class ProductService {
         product.setImageUrl(productRequest.getImageUrl());
     }
 
+    // Convert Product entity into ProductResponse DTO
     private ProductResponse mapToProductResponse(Product product) {
+
         ProductResponse response = new ProductResponse();
 
         response.setId(product.getId());
@@ -92,12 +111,5 @@ public class ProductService {
         response.setActive(product.isActive());
 
         return response;
-    }
-
-    public List<ProductResponse> searchProducts(String keyword) {
-    return productRepository.searchProducts(keyword)
-            .stream()
-            .map(this::mapToProductResponse)
-            .collect(Collectors.toList());
     }
 }

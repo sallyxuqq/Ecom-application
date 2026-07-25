@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 
@@ -111,5 +112,30 @@ public class CartService {
         return true;
 
     }
-           
+
+    @Transactional
+    public boolean removeFromCart(Long userId, Long productId) {
+
+        Optional<User> userOpt = userRepository.findById(userId);
+        Optional<Product> productOpt = productRepository.findById(productId);
+
+        if (userOpt.isEmpty() || productOpt.isEmpty()) {
+            return false;
+        }
+
+        User user = userOpt.get();
+        Product product = productOpt.get();
+
+        CartItem existingCartItem =
+                cartItemRepository.findByUserAndProduct(user, product);
+
+        if (existingCartItem == null) {
+            return false;
+        }
+
+        cartItemRepository.deleteByUserAndProduct(user, product);
+
+        return true;
+    }
+            
 }
