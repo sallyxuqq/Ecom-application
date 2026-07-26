@@ -22,4 +22,6 @@ public interface CartItemRepository
             // Delete a cart item for a specific user and product
             void deleteByUserAndProduct(User user, Product product);
 
+            void deleteByUser(User user);
+
 }

@@ -140,6 +140,13 @@ public class CartService {
     }
 
 
+     @Transactional
+    public void clearCart(Long userId) {
+
+    userRepository.findById(userId)
+            .ifPresent(cartItemRepository::deleteByUser);
+    }
+
     public List<CartItem> getCart(Long userId) {
 
     return userRepository.findById(userId)
